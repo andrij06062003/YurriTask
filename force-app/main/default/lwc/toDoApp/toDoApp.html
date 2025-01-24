@@ -1,0 +1,58 @@
+<template>
+    <lightning-card title="To-Do List" icon-name="standard:task">
+        <div class="slds-m-around_medium">
+            <lightning-input label="New Task" value={newTask} onchange={handleInputChange}></lightning-input>
+            <lightning-button label="Add To-Do" onclick={addToDo} class="slds-m-top_small"></lightning-button>
+        </div>
+
+        <template if:true={toDoList}>
+            <div class="slds-scrollable">
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th scope="col">
+                                <div class="slds-truncate" title="Task Name">Name</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Actions">Delete</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Edit">Edit</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={toDoList} for:item="todo">
+                            <tr key={todo.id} class="slds-hint-parent">
+                                <td>
+                                    <lightning-input class="slds-truncate" 
+                                    type='text' 
+                                    value={todo.title} 
+                                    data-id={todo.id}
+                                    onchange={handleEditChange}>    
+                                    </lightning-input>
+                                </td>
+                                <td>
+                                    <lightning-button-icon icon-name="utility:delete" 
+                                                           alternative-text="Delete" 
+                                                           class="slds-m-left_x-small"
+                                                           data-id={todo.id}
+                                                           onclick={deleteToDos}>
+                                    </lightning-button-icon>
+                                </td>
+                                <td>
+                                    <lightning-button-icon icon-name="utility:settings" 
+                                                           alternative-text="Edit" 
+                                                           class="slds-m-left_x-small"
+                                                           data-id={todo.id}
+                                                           onclick={saveToDos}>
+                                    </lightning-button-icon>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+    </lightning-card>
+</template>
