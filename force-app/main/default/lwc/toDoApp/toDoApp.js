@@ -1,8 +1,8 @@
 import { LightningElement, track } from 'lwc';
-import getToDoList from '@salesforce/apex/ControllerHandler.getListController';
-import addToList from '@salesforce/apex/ControllerHandler.postListController';
-import deleteRecord from '@salesforce/apex/ControllerHandler.deleteListController';
-import editRecord from '@salesforce/apex/ControllerHandler.editListController';
+ import getToDoList from '@salesforce/apex/ToDoApp.getList';
+// import addToList from '@salesforce/apex/ControllerHandler.postList';
+// import deleteRecord from '@salesforce/apex/ControllerHandler.deleteList';
+// import editRecord from '@salesforce/apex/ControllerHandler.editList';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class ToDoApp extends LightningElement {
