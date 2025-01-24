@@ -2,9 +2,7 @@ public with sharing class HttpCalloutHandler {
 //Version 1
     public static String BaseUrl = 'https://shrimo.com/fake-api/todos';
    
-    @AuraEnabled(cacheable=true)
     public static List<Object> getList() {
-
         Http http = new Http();
         HttpRequest req  = new HttpRequest();
         req.setEndpoint(BaseUrl);
@@ -22,9 +20,8 @@ public with sharing class HttpCalloutHandler {
         }
     }
 
-    @AuraEnabled(cacheable=true)
+    
     public static Map<String , Object> postList(String title , String status){
-
         Http http = new Http();
         HttpRequest req = new HttpRequest();
         req.setEndpoint(BaseUrl);
@@ -56,9 +53,8 @@ public with sharing class HttpCalloutHandler {
         
     }
 
-    @AuraEnabled(cacheable=true)
-    public static string deleteRecord(String id){
-       
+   
+    public static List<String> deleteRecord(String id){
         Http http = new Http();
         HttpRequest req = new HttpRequest();
         req.setEndpoint(BaseUrl + '/' + id);
@@ -68,7 +64,7 @@ public with sharing class HttpCalloutHandler {
         HttpResponse res = http.send(req);
 
         if (res.getStatusCode()==200 || res.getStatusCode() ==204) {
-            return 'Record Deleted';
+            return (List<String>)JSON.deserializeUntyped(res.getBody());
         }
         else {
              throw new AuraHandledException('failed to delete');
@@ -76,7 +72,6 @@ public with sharing class HttpCalloutHandler {
 
 
     }
-    @AuraEnabled(cacheable=true)
     public static Map<String,Object> editRecord(String id , String title){
         Http http = new Http();
         HttpRequest req = new HttpRequest();
