@@ -1,0 +1,178 @@
+<template>
+    <template if:true={toDoList}>
+        <div class="slds-scrollable">
+            <table
+                class="slds-table slds-table_cell-buffer slds-table_bordered"
+            >
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <th scope="col">
+                            <div class="slds-truncate" title="Task Name">
+                                Name
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={toDoList} for:item="todo">
+                        <tr key={todo.id}>
+                            <td>
+                                <div class="slds-grid slds-wrap">
+                                    <div
+                                        class="slds-col slds-grid slds-p-right_small"
+                                    >
+                                        <div
+                                            class="slds-col slds-grid slds-grid_vertical"
+                                        >
+                                            <div
+                                                class="slds-col slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small"
+                                            >
+                                                {todo.title}
+                                            </div>
+                                            <div
+                                                class="slds-col slds-grid slds-wrap"
+                                                style="
+                                                    display: flex;
+                                                    flex-wrap: wrap;
+                                                    gap: 10px;
+                                                "
+                                            >
+                                                <template
+                                                    for:each={todo.tags}
+                                                    for:item="tag"
+                                                >
+                                                    <div
+                                                        class="slds-box slds-grid slds-wrap"
+                                                        style="flex: auto"
+                                                        key={tag}
+                                                    >
+                                                        {tag}
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+
+                                        <div
+                                            class="slds-col slds-grid slds-grid_vertical"
+                                        >
+                                            <div
+                                                class="slds-col slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small"
+                                            >
+                                                {todo.status}
+                                            </div>
+                                            <div
+                                                class="slds-col slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small"
+                                            >
+                                                {todo.dueDate}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div
+                                    class="slds-col slds-grow-none slds-grid slds-grid_vertical"
+                                >
+                                    <div class="slds-col">
+                                        <lightning-button-icon
+                                            icon-name="utility:delete"
+                                            alternative-text="Delete"
+                                            class="slds-m-left_x-small"
+                                            data-id={todo.id}
+                                            onclick={deleteToDos}
+                                        >
+                                        </lightning-button-icon>
+                                    </div>
+
+                                    <div class="slds-col">
+                                        <lightning-button-icon
+                                            icon-name="utility:settings"
+                                            alternative-text="Edit"
+                                            class="slds-m-left_x-small"
+                                            data-id={todo.id}
+                                            onclick={modalOpen}
+                                        >
+                                        </lightning-button-icon>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </template>
+
+    <template if:true={isModalOpen}>
+        <section role="dialog" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <div class="slds-modal__content slds-p-around_medium">
+                    <header class="slds-modal__header">
+                        <h2 class="slds-text-heading_medium">Edit To-Do</h2>
+                    </header>
+                    <div class="slds-modal__body">
+                        <template if:true={currentRecord}>
+                            <lightning-input
+                                type="text"
+                                label="Title"
+                                name="title"
+                                value={currentRecord.title}
+                                onchange={handleModalInputChange}
+                            ></lightning-input>
+                            <lightning-input
+                                type="text"
+                                label="Status"
+                                name="status"
+                                value={currentRecord.status}
+                                onchange={handleModalInputChange}
+                            ></lightning-input>
+                            <lightning-input
+                                type="text"
+                                label="Due Date"
+                                name="dueDate"
+                                value={currentRecord.dueDate}
+                                onchange={handleModalInputChange}
+                            ></lightning-input>
+                            <template
+                                for:each={currentRecord.tags}
+                                for:item="tag"
+                            >
+                                <div
+                                    key={tag}
+                                    class="slds-col slds-grid slds-wrap"
+                                >
+                                    <lightning-input
+                                        type="text"
+                                        label="Tags"
+                                        name="tag"
+                                        value={tag}
+                                        onchange={handleModalInputChange}
+                                    ></lightning-input>
+                                </div>
+                            </template>
+                        </template>
+                        <template if:false={currentRecord}>
+                            <lightning-spinner
+                                alternative-text="Loading..."
+                                variant="brand"
+                            ></lightning-spinner>
+                        </template>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <lightning-button
+                            label="Cancel"
+                            onclick={closeModal}
+                        ></lightning-button>
+                        <lightning-button
+                            label="Save"
+                            variant="brand"
+                            onclick={saveToDos}
+                        ></lightning-button>
+                    </footer>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>
