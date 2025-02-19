@@ -8,7 +8,7 @@
                     <tr class="slds-line-height_reset">
                         <th scope="col">
                             <div class="slds-truncate" title="Task Name">
-                                Name
+                                Records
                             </div>
                         </th>
                     </tr>
@@ -19,13 +19,13 @@
                             <td>
                                 <div class="slds-grid slds-wrap">
                                     <div
-                                        class="slds-col slds-grid slds-p-right_small"
+                                        class="slds-col slds-grid slds-p-right_small "
                                     >
                                         <div
                                             class="slds-col slds-grid slds-grid_vertical"
                                         >
                                             <div
-                                                class="slds-col slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small"
+                                                class="slds-col slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small "
                                             >
                                                 {todo.title}
                                             </div>
@@ -80,6 +80,7 @@
                                             alternative-text="Delete"
                                             class="slds-m-left_x-small"
                                             data-id={todo.id}
+                                            data-source ={todo.source}
                                             onclick={deleteToDos}
                                         >
                                         </lightning-button-icon>
@@ -122,6 +123,13 @@
                             ></lightning-input>
                             <lightning-input
                                 type="text"
+                                label="Description"
+                                name="description"
+                                value={currentRecord.description}
+                                onchange={handleModalInputChange}
+                            ></lightning-input>
+                            <lightning-input
+                                type="text"
                                 label="Status"
                                 name="status"
                                 value={currentRecord.status}
@@ -134,6 +142,13 @@
                                 value={currentRecord.dueDate}
                                 onchange={handleModalInputChange}
                             ></lightning-input>
+                            <lightning-input
+                            type="text"
+                            label="Priority"
+                            name="priority"
+                            value={currentRecord.priority}
+                            onchange={handleModalInputChange}
+                        ></lightning-input>
                             <template
                                 for:each={currentRecord.tags}
                                 for:item="tag"

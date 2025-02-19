@@ -1,14 +1,15 @@
-import { LightningElement, api, track } from "lwc";
+import { LightningElement, api } from "lwc";
 import getToDoList from "@salesforce/apex/ToDoAppController.getList";
 import deleteRecord from "@salesforce/apex/ToDoAppController.deleteList";
 import editRecord from "@salesforce/apex/ToDoAppController.updateToList";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
+
 export default class ToDoApp extends LightningElement {
     @api toDoList = [];
-    @track isModalOpen = false;
-    @track currentRecord = null;
-    @track editedRecord = null;
+    @api source;
+     isModalOpen = false;
+     currentRecord = null;
 
     connectedCallback() {
         this.loadToDos();
@@ -26,7 +27,8 @@ export default class ToDoApp extends LightningElement {
                 description: todo.description,
                 dueDate: todo.dueDate,
                 priority: todo.priority,
-                tags: todo.tags
+                tags: todo.tags,
+                source: todo.source
             }));
 
             console.log(this.id);
@@ -36,11 +38,13 @@ export default class ToDoApp extends LightningElement {
     }
 
     async deleteToDos(event) {
-        const recid = event.currentTarget.dataset.id;
+        const recid = event.target.dataset.id;
+        const recSource = event.target.dataset.source;
         try {
             console.log("Event target:", event.target);
             console.log("Record id:", recid);
-            await deleteRecord({ id: recid });
+            console.log("Record source:", recSource);
+            await deleteRecord({ id: recid , source: recSource});
             this.toDoList = this.toDoList.filter((todo) => todo.id !== recid);
             this.showToast("success", "Record deleted", "success");
         } catch (error) {
@@ -61,7 +65,7 @@ export default class ToDoApp extends LightningElement {
         const fieldName = event.target.name;
         const newValue = event.target.value;
         this.currentRecord = { ...this.currentRecord, [fieldName]: newValue };
-        console.log(JSON.stringify(this.currentRecord));
+
     }
 
     async saveToDos(){
@@ -69,23 +73,28 @@ export default class ToDoApp extends LightningElement {
             this.showToast("Error", "Failed update", "error");
             return;
         }
+        console.log(this.currentRecord.source);
         const recordId = this.currentRecord.id;
+        console.log(recordId)
         try {
             await editRecord(
                 {
                     id:recordId,
-                    record: [
+                    record: 
                         {
                             id:this.currentRecord.id,
                             title:this.currentRecord.title,
+                            description:this.currentRecord.description,
                             status:this.currentRecord.status,
                             dueDate:this.currentRecord.dueDate,
-                            tags:this.currentRecord.tags
-                        }
-                ]
+                            tags:this.currentRecord.tags,
+                            source:this.currentRecord.source
+                        },
+                     
+                
             })
             this.toDoList = this.toDoList.map(item=> item.id===this.currentRecord.id?this.currentRecord:item);
-           
+           console.log(JSON.stringify(this.toDoList));
             this.showToast("success", "Record edited","success");
             this.closeModal();
         } catch (error) {

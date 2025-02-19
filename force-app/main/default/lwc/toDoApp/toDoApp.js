@@ -9,7 +9,8 @@ export default class ToDoApp extends LightningElement {
     newDescription = "";
     newDueDate = "12-11-2025";
     newPriority = "Medium";
-    newTags = [];    
+    newTags = [];  
+    source = '';  
     
     
     handleInputChange(event) {
@@ -39,6 +40,12 @@ export default class ToDoApp extends LightningElement {
             connectedCallback(){
                 this.fetchToDoList();
             }
+            handleSourceApi(){
+                this.source = 'API';
+            }
+            handleSourceSalesForce(){
+                this.source = 'SalesForce';
+            }
    
     async addToDo() {
         if (!this.newTask) {
@@ -54,13 +61,15 @@ export default class ToDoApp extends LightningElement {
             priority: this.newPriority,
             tags: this.newTags.split(",").map((tag) => {
                 return tag.trim();
-            })
+            }),
+            source:this.source
         };
 
+        console.log(this.source);
         console.log(JSON.stringify(newToDo));
         try {
             const res = await addToList({
-                serializedRecord: JSON.stringify([newToDo])
+                serialisedRecord: JSON.stringify([newToDo])
             });
             this.toDoList = [...res, ...this.toDoList];
             //this.resetFields();

@@ -1,8 +1,8 @@
-public with sharing class ToDoAppHttpCalloutHandler {
+public with sharing class ToDoAppHttpCalloutHandler implements IToDoApp {
     //Version 1
     public static String BaseUrl = 'https://shrimo.com/fake-api/todos';
 
-    public static List<ToDoAppWrapper> getList() {
+    public List<ToDoAppWrapper> getList() {
         Http http = new Http();
         HttpRequest req = new HttpRequest();
         req.setEndpoint(BaseUrl);
@@ -12,16 +12,22 @@ public with sharing class ToDoAppHttpCalloutHandler {
         HttpResponse res = http.send(req);
         if (res.getStatusCode() == 200) {
             System.debug(res.getBody());
-            return (List<ToDoAppWrapper>) JSON.deserialize(
+
+            List<ToDoAppWrapper> todos =(List<ToDoAppWrapper>) JSON.deserialize(
                 res.getBody().replaceAll('_id', 'id'),
                 List<ToDoAppWrapper>.class
             );
+            for (ToDoAppWrapper todo : todos) {
+                todo.source = 'API';
+            }
+            return todos;
         } else {
             throw new AuraHandledException('tU Daun');
         }
+        
     }
 
-    public static List<ToDoAppWrapper> postList(List<ToDoAppWrapper> todoList) {
+    public List<ToDoAppWrapper> postList(List<ToDoAppWrapper> todoList) {
         List<ToDoAppWrapper> todo = new List<ToDoAppWrapper>();
         Http http = new Http();
         for (ToDoAppWrapper rec : todoList) {
@@ -51,7 +57,7 @@ public with sharing class ToDoAppHttpCalloutHandler {
         return todo;
     }
 
-    public static List<ToDoAppWrapper> deleteRecord(String id) {
+    public List<ToDoAppWrapper> deleteRecord(String id , String source) {
         Http http = new Http();
         HttpRequest req = new HttpRequest();
         req.setEndpoint(BaseUrl + '/' + id);
@@ -67,13 +73,7 @@ public with sharing class ToDoAppHttpCalloutHandler {
         }
     }
 
-    public static ToDoAppWrapper editRecord(
-        String id,
-        List<ToDoAppWrapper> record
-
-    ) {
-        System.debug(id);
-        System.debug(record);
+    public ToDoAppWrapper editRecord(String id, ToDoAppWrapper record) {
         Http http = new Http();
         HttpRequest req = new HttpRequest();
         req.setEndpoint(BaseUrl + '/' + id);
